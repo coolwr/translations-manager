@@ -19,7 +19,7 @@
   },
   "AccessToken": {
     "dataSource": "sqlite",
-    "public": false
+    "public": true
   },
   "ACL": {
     "dataSource": "sqlite",
@@ -74,6 +74,10 @@
     "public": true
   },
   "LanguageTranslation": {
+    "dataSource": "sqlite",
+    "public": true
+  },
+  "Auth": {
     "dataSource": "sqlite",
     "public": true
   }

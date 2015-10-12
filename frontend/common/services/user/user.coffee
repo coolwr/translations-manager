@@ -1,5 +1,6 @@
 angular.module('translation.services.user', [
   'restangular'
+  'lbServices'
   'ngCookies'
   'ngMaterial'
   'ui.router'
@@ -7,7 +8,8 @@ angular.module('translation.services.user', [
 ])
 
 
-.service 'UserService', ($q, $cookies, $http, $timeout, $state, $mdToast, Restangular, UserPermissionsSettings) ->
+.service 'UserService', ($q, $cookies, $http, $timeout, $state, $mdToast, Restangular,
+  UserPermissionsSettings, Account) ->
 
   accessLevels  = UserPermissionsSettings.accessLevels
   userRoles     = UserPermissionsSettings.userRoles
@@ -32,15 +34,6 @@ angular.module('translation.services.user', [
 
   user = angular.copy defaultUserObject
 
-  setCredentialsCookie = (credentials) ->
-    $cookies.put 'account', JSON.stringify credentials
-
-  getCredentialsCookie = ->
-    _credentials = $cookies.get 'account'
-    if _credentials
-      return JSON.parse _credentials
-    else
-      return false
 
   getSession = ->
 
@@ -49,24 +42,24 @@ angular.module('translation.services.user', [
 
     _deferred = $q.defer()
 
-    credentials = getCredentialsCookie()
-
-    token = $cookies.get 'token'
 
 
-    if token
-      $http.defaults.headers.common['authorization'] = token
+#
+#    if _credentials
+#      $http.defaults.headers.common['Authorization'] = _credentials.id
 
-    Restangular.one('profile').get().then (response) ->
-      user = response.plain()
-      user.loggedIn = true
-      _deferred.resolve user
+    _deferred.resolve()
 
-      $timeout ->
-        _notify.notify user
-
-    , (error) ->
-      _deferred.resolve error
+#    Restangular.one('profile').get().then (response) ->
+#      user = response.plain()
+#      user.loggedIn = true
+#      _deferred.resolve user
+#
+#      $timeout ->
+#        _notify.notify user
+#
+#    , (error) ->
+#      _deferred.resolve error
 
     return _deferred.promise
 
@@ -81,8 +74,11 @@ angular.module('translation.services.user', [
 
 
   loadDashboard = (account) ->
-    console.log account
-    setCredentialsCookie account
+
+    Account.findById({id: 1}).$promise.then (res) ->
+      console.log res
+#    console.log account
+#    setCredentialsCookie account
 #    $http.defaults.headers.common['authorization'] = token
 #
 #    Restangular.one('profile').get()
@@ -106,8 +102,6 @@ angular.module('translation.services.user', [
     sync:                 syncUserObject
     loadDashboard:        loadDashboard
     updated:              _notify.promise
-    setCredentialsCookie: setCredentialsCookie
-    getCredentialsCookie: getCredentialsCookie
 
     resetUser: ->
       user = angular.copy defaultUserObject

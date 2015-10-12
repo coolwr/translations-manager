@@ -17,7 +17,7 @@ angular.module 'translation.services.authorization', [
         email:          email
         password:       password
 
-    Account.login _credentials,
+    Account.login {rememberMe: true},  _credentials,
     (response) ->
 
       _deferred.resolve response
